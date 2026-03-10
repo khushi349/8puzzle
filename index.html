@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>8 Puzzle Game</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+h1{
+    margin-bottom:20px;
+}
+
+.board{
+    display:grid;
+    grid-template-columns:repeat(3,100px);
+    grid-template-rows:repeat(3,100px);
+    gap:10px;
+    justify-content:center;
+    margin:auto;
+}
+
+.tile{
+    width:100px;
+    height:100px;
+    background:#4a6cf7;
+    color:white;
+    font-size:32px;
+    font-weight:bold;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:10px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.tile:hover{
+    background:#2f4bd1;
+}
+
+.empty{
+    background:transparent;
+    cursor:default;
+}
+
+button{
+    margin-top:20px;
+    padding:10px 20px;
+    font-size:16px;
+    border:none;
+    border-radius:8px;
+    background:#4a6cf7;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#2f4bd1;
+}
+
+#message{
+    margin-top:15px;
+    font-weight:bold;
+    color:green;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🧩 8 Puzzle Game</h1>
+
+<div class="board" id="board"></div>
+
+<button onclick="shuffle()">Shuffle</button>
+
+<p id="message"></p>
+
+</div>
+
+<script>
+
+let board = [1,2,3,4,5,6,7,8,""];
+
+function drawBoard(){
+
+    const boardDiv = document.getElementById("board");
+    boardDiv.innerHTML = "";
+
+    board.forEach((value,index)=>{
+
+        const tile = document.createElement("div");
+
+        tile.classList.add("tile");
+
+        if(value === ""){
+            tile.classList.add("empty");
+        }
+
+        tile.innerText = value;
+
+        tile.addEventListener("click",function(){
+            move(index);
+        });
+
+        boardDiv.appendChild(tile);
+
+    });
+
+}
+
+function move(index){
+
+    const emptyIndex = board.indexOf("");
+
+    const row = Math.floor(index/3);
+    const col = index % 3;
+
+    const emptyRow = Math.floor(emptyIndex/3);
+    const emptyCol = emptyIndex % 3;
+
+    if(
+        (row === emptyRow && Math.abs(col-emptyCol)===1) ||
+        (col === emptyCol && Math.abs(row-emptyRow)===1)
+    ){
+
+        let temp = board[index];
+        board[index] = board[emptyIndex];
+        board[emptyIndex] = temp;
+
+        drawBoard();
+        checkWin();
+    }
+}
+
+function shuffle(){
+
+    for(let i = board.length-1; i>0; i--){
+
+        let j = Math.floor(Math.random()*(i+1));
+
+        let temp = board[i];
+        board[i] = board[j];
+        board[j] = temp;
+    }
+
+    document.getElementById("message").innerText="";
+
+    drawBoard();
+}
+
+function checkWin(){
+
+    const win = [1,2,3,4,5,6,7,8,""];
+
+    if(JSON.stringify(board) === JSON.stringify(win)){
+        document.getElementById("message").innerText="🎉 You solved the puzzle!";
+    }
+}
+
+drawBoard();
+
+</script>
+
+</body>
+</html>
